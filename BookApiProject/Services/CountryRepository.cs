@@ -15,9 +15,14 @@ namespace BookApiProject.Services
             _countryContext = countryContext;
         }
 
+        public bool CountryExists(int countryId)
+        {
+            return _countryContext.Countries.Any(c => c.Id == countryId);
+        }
+
         public ICollection<Author> GetAuthorsFromACountry(int countryId)
         {
-            throw new NotImplementedException();
+            return _countryContext.Authors.Where(c => c.Country.Id == countryId).ToList();
         }
 
         public ICollection<Country> GetCountries()
@@ -32,7 +37,7 @@ namespace BookApiProject.Services
 
         public Country GetCountryOfAnAuthor(int authorId)
         {
-            throw new NotImplementedException();
+            return _countryContext.Authors.Where(a => a.Id == authorId).Select(c => c.Country).FirstOrDefault();
         }
     }
 }
