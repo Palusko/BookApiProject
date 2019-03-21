@@ -25,7 +25,7 @@ namespace BookApiProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<CountryDto>))]
         public IActionResult GetCountries()
         {
-            var countries = _countryRepository.GetCountries().Where(c => c.Id == 250);
+            var countries = _countryRepository.GetCountries();
             
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
