@@ -71,7 +71,7 @@ namespace BookApiProject.Controllers
         [HttpGet("books/{bookId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(CategoryDto))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryDto>))]
         public IActionResult GetAllCategoriesForABook(int bookId)
         {
             //TO DO - Validate the book exists
