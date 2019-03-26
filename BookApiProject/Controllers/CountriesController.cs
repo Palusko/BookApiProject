@@ -13,10 +13,12 @@ namespace BookApiProject.Controllers
     public class CountriesController : Controller
     {
         private ICountryRepository _countryRepository;
+        private IAuthorRepository _authorRepository;
 
-        public CountriesController(ICountryRepository countryRepository)
+        public CountriesController(ICountryRepository countryRepository, IAuthorRepository authorRepository)
         {
             _countryRepository = countryRepository;
+            _authorRepository = authorRepository;
         }
 
         //api/countries
@@ -67,6 +69,7 @@ namespace BookApiProject.Controllers
             return Ok(countryDto);
         }
 
+        //TO DO - need to test it after we implement IAuthor repository
         //api/countries/authors/authorId
         [HttpGet("authors/{authorId}")]
         [ProducesResponseType(400)]
@@ -74,7 +77,8 @@ namespace BookApiProject.Controllers
         [ProducesResponseType(200, Type = typeof(CountryDto))]
         public IActionResult GetCountryOfAnAuthor(int authorId)
         {
-            //TO DO - Validate the author exists
+            if (!_authorRepository.AuthorExists(authorId))
+                return NotFound();
 
             var country = _countryRepository.GetCountryOfAnAuthor(authorId);
 
