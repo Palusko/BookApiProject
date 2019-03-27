@@ -102,7 +102,6 @@ namespace BookApiProject.Controllers
             return Ok(reviewsDto);
         }
 
-        //TO DO - need to test it after we implement IReview repository
         //api/reviewers/reviewId/reviewer
         [HttpGet("{reviewId}/reviewer")]
         [ProducesResponseType(200, Type = typeof(ReviewerDto))]
