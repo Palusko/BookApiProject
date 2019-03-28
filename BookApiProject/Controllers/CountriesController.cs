@@ -93,7 +93,6 @@ namespace BookApiProject.Controllers
             return Ok(countryDto);
         }
 
-        //TO DO GetAuthorsFromACountry
         //api/countries/countryId/authors
         [HttpGet("{countryId}/authors")]
         [ProducesResponseType(200, Type = typeof (IEnumerable<AuthorDto>))]

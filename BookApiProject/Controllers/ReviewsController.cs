@@ -75,8 +75,7 @@ namespace BookApiProject.Controllers
 
             return Ok(reviewDto);
         }
-
-        //TO DO Need to retest the method for book Not Found
+        
         //api/reviews/books/bookId
         [HttpGet("books/{bookId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]

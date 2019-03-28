@@ -100,8 +100,7 @@ namespace BookApiProject.Controllers
 
             return Ok(booksDto);
         }
-
-        //To Do - Retest this action after book interface is implemented
+       
         //api/authors/books/bookId
         [HttpGet("books/{bookId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
