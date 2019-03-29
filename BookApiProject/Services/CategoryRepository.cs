@@ -39,5 +39,22 @@ namespace BookApiProject.Services
         {
             return _categoryContext.Categories.Where(c => c.Id == categoryId).FirstOrDefault();
         }
+
+        public bool IsDuplicateCategoryName(int categoryId, string categoryName)
+        {
+            var categories = _categoryContext.Categories.Where(c => c.Name == categoryName);
+
+            foreach (var category in categories)
+            {
+                if (category.Id != categoryId) //two categories with the same name
+                {
+                    _categoryContext.Entry(category).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+                    return true;
+                }
+                _categoryContext.Entry(category).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            }
+
+            return false;
+        }
     }
 }
