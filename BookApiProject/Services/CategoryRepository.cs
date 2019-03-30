@@ -47,5 +47,29 @@ namespace BookApiProject.Services
 
             return category == null ? false : true;
         }
+
+        public bool CreateCategory(Category category)
+        {
+            _categoryContext.Add(category);
+            return Save();
+        }
+
+        public bool UpdateCategory(Category category)
+        {
+            _categoryContext.Update(category);
+            return Save();
+        }
+
+        public bool DeleteCategory(Category category)
+        {
+            _categoryContext.Remove(category);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _categoryContext.SaveChanges();
+            return saved >= 0 ? true : false;
+        }
     }
 }
