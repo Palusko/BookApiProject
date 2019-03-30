@@ -22,7 +22,7 @@ namespace BookApiProject.Services
 
         public bool CreateCountry(Country country)
         {
-            _countryContext.AddAsync(country);
+            _countryContext.Add(country);
             return Save();
         }
 
