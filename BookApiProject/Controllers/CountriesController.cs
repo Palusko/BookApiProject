@@ -47,7 +47,7 @@ namespace BookApiProject.Controllers
         }
 
         //api/countries/countryId
-        [HttpGet("{countryId}", Name ="GetCountry")]
+        [HttpGet("{countryId}", Name = "GetCountry")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(CountryDto))]
@@ -135,55 +135,26 @@ namespace BookApiProject.Controllers
             if (countryToCreate == null)
                 return BadRequest(ModelState);
 
-            var countries = _countryRepository.GetCountries().Select(c => c.Name);
+            var country = _countryRepository.GetCountries()
+                            .Where(c => c.Name.Trim().ToUpper() == countryToCreate.Name.Trim().ToUpper())
+                            .FirstOrDefault();
 
-            if (countries.Contains(countryToCreate.Name.Trim(), StringComparer.OrdinalIgnoreCase))
+            if (country != null)
             {
-                ModelState.AddModelError("", $"Country {countryToCreate} already exists");
-                return StatusCode(422);
+                ModelState.AddModelError("", $"Country {countryToCreate.Name} already exists");
+                return StatusCode(422, ModelState);
             }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_countryRepository.CreateCountry(countryToCreate))
-                return StatusCode(500, $"Something went terribly wrong when saving {countryToCreate.Name}");
-
-            return CreatedAtRoute(nameof(CountriesController.GetCountry),
-                                new { countryId = countryToCreate.Id }, countryToCreate);
-        }
-
-        //api/countries/countryId
-        [HttpPut("{countryId}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(422)]
-        [ProducesResponseType(500)]
-        public IActionResult UpdateCountry(int countryId, [FromBody] Country countryToUpdate)
-        {
-            if (countryToUpdate == null)
-                return BadRequest(ModelState);
-
-            if (!_countryRepository.CountryExists(countryId))
-                return NotFound();
-
-            if (countryId != countryToUpdate.Id)
-                return BadRequest(ModelState);
-
-            if (_countryRepository.IsDuplicateCountryName(countryId, countryToUpdate.Name))
+            if(!_countryRepository.CreateCountry(countryToCreate))
             {
-                ModelState.AddModelError("", $"Country {countryToUpdate} already exists");
-                return StatusCode(422);
+                ModelState.AddModelError("", $"Something went wrong saving {countryToCreate.Name}");
+                return StatusCode(500, ModelState);
             }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_countryRepository.UpdateCountry(countryToUpdate))
-                return StatusCode(500, $"Something went terribly wrong when saving {countryToUpdate.Name}");
-
-            return NoContent();
-        }
+            return CreatedAtRoute("GetCountry", new { countryId = countryToCreate.Id }, countryToCreate);
+        }       
     }
 }

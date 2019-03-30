@@ -52,19 +52,10 @@ namespace BookApiProject.Services
 
         public bool IsDuplicateIsbn(int bookId, string bookIsbn)
         {
-            var books = _bookDbContext.Books.Where(b => b.Isbn == bookIsbn);
+            var book = _bookDbContext.Books.Where(b => b.Isbn.Trim().ToUpper() == bookIsbn.Trim().ToUpper() 
+                                                && b.Id != bookId).FirstOrDefault();
 
-            foreach(var book in books)
-            {
-                if (book.Id != bookId) //two books with the same ISBN
-                {
-                    _bookDbContext.Entry(book).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-                    return true;
-                }
-                _bookDbContext.Entry(book).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            }
-
-            return false;
+            return book == null ? false : true;
         }
     }
 }

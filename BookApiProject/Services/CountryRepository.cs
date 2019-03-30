@@ -54,19 +54,10 @@ namespace BookApiProject.Services
 
         public bool IsDuplicateCountryName(int countryId, string countryName)
         {
-            var countries = _countryContext.Countries.Where(c => c.Name == countryName);
+            var country = _countryContext.Countries.Where(c => c.Name.Trim().ToUpper() == countryName.Trim().ToUpper()
+                                                && c.Id != countryId).FirstOrDefault();
 
-            foreach (var country in countries)
-            {
-                if (country.Id != countryId) //two countries with the same name
-                {
-                    _countryContext.Entry(country).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-                    return true;
-                }
-                _countryContext.Entry(country).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            }
-
-            return false;
+            return country == null ? false : true;
         }
 
         public bool Save()
