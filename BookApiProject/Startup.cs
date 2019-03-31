@@ -24,7 +24,9 @@ namespace BookApiProject
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                    .AddJsonOptions(o => o.SerializerSettings.ReferenceLoopHandling =
+                                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             var connectionString = Configuration["connectionStrings:bookDbConnectionString"];
             services.AddDbContext<BookDbContext>(c => c.UseSqlServer(connectionString));
