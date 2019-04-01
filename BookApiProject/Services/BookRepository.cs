@@ -25,6 +25,42 @@ namespace BookApiProject.Services
             return _bookDbContext.Books.Any(b => b.Isbn == bookIsbn);
         }
 
+        public bool CreateBook(List<int> authorsId, List<int> categoriesId, Book book)
+        {
+            var authors = _bookDbContext.Authors.Where(a => authorsId.Contains(a.Id)).ToList();
+            var categories = _bookDbContext.Categories.Where(c => categoriesId.Contains(c.Id)).ToList();
+
+            foreach(var author in authors)
+            {
+                var bookAuthor = new BookAuthor()
+                {
+                    Author = author,
+                    Book = book
+                };
+                _bookDbContext.Add(bookAuthor);
+            }
+
+            foreach (var category in categories)
+            {
+                var bookCategory = new BookCategory()
+                {
+                    Category = category,
+                    Book = book
+                };
+                _bookDbContext.Add(bookCategory);
+            }
+
+            _bookDbContext.Add(book);
+
+            return Save();
+        }
+
+        public bool DeleteBook(Book book)
+        {
+            _bookDbContext.Remove(book);
+            return Save();
+        }
+
         public Book GetBook(int bookId)
         {
             return _bookDbContext.Books.Where(b => b.Id == bookId).FirstOrDefault();
@@ -56,6 +92,48 @@ namespace BookApiProject.Services
                                                 && b.Id != bookId).FirstOrDefault();
 
             return book == null ? false : true;
+        }
+
+        public bool Save()
+        {
+            var saved = _bookDbContext.SaveChanges();
+            return saved >= 0 ? true : false;
+        }
+
+        public bool UpdateBook(List<int> authorsId, List<int> categoriesId, Book book)
+        {
+            var authors = _bookDbContext.Authors.Where(a => authorsId.Contains(a.Id)).ToList();
+            var categories = _bookDbContext.Categories.Where(c => categoriesId.Contains(c.Id)).ToList();
+
+            var bookAuthorsToDelete = _bookDbContext.BookAuthors.Where(b=> b.BookId == book.Id);
+            var bookCategoriesToDelete = _bookDbContext.BookCategories.Where(b => b.BookId == book.Id);
+
+            _bookDbContext.RemoveRange(bookAuthorsToDelete);
+            _bookDbContext.RemoveRange(bookCategoriesToDelete);
+
+            foreach (var author in authors)
+            {
+                var bookAuthor = new BookAuthor()
+                {
+                    Author = author,
+                    Book = book
+                };
+                _bookDbContext.Add(bookAuthor);
+            }
+
+            foreach (var category in categories)
+            {
+                var bookCategory = new BookCategory()
+                {
+                    Category = category,
+                    Book = book
+                };
+                _bookDbContext.Add(bookCategory);
+            }
+
+            _bookDbContext.Update(book);
+
+            return Save();
         }
     }
 }
